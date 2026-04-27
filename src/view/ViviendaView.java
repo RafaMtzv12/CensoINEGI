@@ -7,6 +7,9 @@ package view;
 import java.sql.*;
 import javax.swing.table.DefaultTableModel;
 import dao.Conexion;
+import dao.ViviendaDAO;
+
+
 /**
  *
  * @author RJMV
@@ -23,7 +26,8 @@ public class ViviendaView extends javax.swing.JFrame {
         cbxTipoVivienda.removeAllItems();
         cargarTipos();
         cargarMunicipios();
-        cargarLocalidades();   
+        cargarLocalidades();  
+        cargarActividades();
     }
     
     public void cargarTipos() {
@@ -86,6 +90,22 @@ public class ViviendaView extends javax.swing.JFrame {
         }
     }
     
+    public void cargarActividades() {
+        try {
+            cbxActividad.removeAllItems();
+            Connection conn = Conexion.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM actividad");
+
+            while (rs.next()) {
+                cbxActividad.addItem(rs.getInt("id") + " - " + rs.getString("nombre"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     public void cargarTabla() {
         System.out.println("CARGANDO TABLA...");
         try {
@@ -130,6 +150,8 @@ public class ViviendaView extends javax.swing.JFrame {
         tablaViviendas = new javax.swing.JTable();
         cbxMunicipio = new javax.swing.JComboBox<>();
         cbxLocalidad = new javax.swing.JComboBox<>();
+        jLabel4 = new javax.swing.JLabel();
+        cbxActividad = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -164,6 +186,10 @@ public class ViviendaView extends javax.swing.JFrame {
 
         cbxLocalidad.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        jLabel4.setText("Actividad Economica:");
+
+        cbxActividad.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -173,26 +199,26 @@ public class ViviendaView extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(75, 75, 75)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4))
                                 .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(cbxTipoVivienda, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(cbxMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(cbxLocalidad, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(cbxTipoVivienda, 0, 112, Short.MAX_VALUE)
+                                    .addComponent(cbxMunicipio, 0, 112, Short.MAX_VALUE)
+                                    .addComponent(cbxLocalidad, 0, 112, Short.MAX_VALUE)
+                                    .addComponent(cbxActividad, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(12, 12, 12)
                                 .addComponent(btnGuardar)
                                 .addGap(64, 64, 64)
-                                .addComponent(btnListar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(btnListar))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(43, 43, 43)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(43, Short.MAX_VALUE))
+                        .addGap(17, 17, 17)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -211,41 +237,85 @@ public class ViviendaView extends javax.swing.JFrame {
                     .addComponent(cbxLocalidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(cbxActividad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnGuardar)
                     .addComponent(btnListar))
-                .addGap(26, 26, 26)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
+                .addGap(14, 14, 14))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        
-        if (cbxMunicipio.getSelectedItem() == null) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Selecciona un municipio");
-            return;
-        }
 
-        if (cbxLocalidad.getSelectedItem() == null) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Selecciona una localidad");
-            return;
-        }  
-        
-        String selectedM = cbxMunicipio.getSelectedItem().toString();
-        int municipio_id = Integer.parseInt(selectedM.split(" - ")[0]);
+        try {
+       if (cbxMunicipio.getSelectedItem() == null) {
+           javax.swing.JOptionPane.showMessageDialog(this, "Selecciona un municipio");
+           return;
+       }
 
-        String selectedL = cbxLocalidad.getSelectedItem().toString();
-        int localidad_id = Integer.parseInt(selectedL.split(" - ")[0]);
+       if (cbxLocalidad.getSelectedItem() == null) {
+           javax.swing.JOptionPane.showMessageDialog(this, "Selecciona una localidad");
+           return;
+       }
 
-        String selected = cbxTipoVivienda.getSelectedItem().toString();
-        int tipo_id = Integer.parseInt(selected.split(" - ")[0]);
-        
-        model.Vivienda v = new model.Vivienda();
-        v.setTipoId(tipo_id);
-        v.setMunicipioId(municipio_id);
-        v.setLocalidadId(localidad_id);// TODO add your handling code here:
+       if (cbxTipoVivienda.getSelectedItem() == null) {
+           javax.swing.JOptionPane.showMessageDialog(this, "Selecciona un tipo de vivienda");
+           return;
+       }
+
+       if (cbxActividad.getSelectedItem() == null) {
+           javax.swing.JOptionPane.showMessageDialog(this, "Selecciona una actividad");
+           return;
+       }
+
+       String selectedM = cbxMunicipio.getSelectedItem().toString();
+       int municipio_id = Integer.parseInt(selectedM.split(" - ")[0]);
+
+       String selectedL = cbxLocalidad.getSelectedItem().toString();
+       int localidad_id = Integer.parseInt(selectedL.split(" - ")[0]);
+
+       String selectedT = cbxTipoVivienda.getSelectedItem().toString();
+       int tipo_id = Integer.parseInt(selectedT.split(" - ")[0]);
+
+       String act = cbxActividad.getSelectedItem().toString();
+       int actividad_id = Integer.parseInt(act.split(" - ")[0]);
+
+       model.Vivienda v = new model.Vivienda();
+       v.setTipoId(tipo_id);
+       v.setMunicipioId(municipio_id);
+       v.setLocalidadId(localidad_id);
+
+       ViviendaDAO dao = new ViviendaDAO();
+       int idVivienda = dao.insertar(v);
+
+       if (idVivienda == 0) {
+           javax.swing.JOptionPane.showMessageDialog(this, "Error al guardar vivienda");
+           return;
+       }
+
+       Connection conn = Conexion.getConnection();
+
+       PreparedStatement ps = conn.prepareStatement(
+           "INSERT INTO vivienda_actividad(vivienda_id, actividad_id) VALUES (?,?)"
+       );
+
+       ps.setInt(1, idVivienda);
+       ps.setInt(2, actividad_id);
+
+       ps.executeUpdate();
+       
+       javax.swing.JOptionPane.showMessageDialog(this, "Registro guardado correctamente");
+
+   } catch (Exception e) {
+       e.printStackTrace();
+       javax.swing.JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+   }
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarActionPerformed
@@ -280,12 +350,14 @@ public class ViviendaView extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnListar;
+    private javax.swing.JComboBox<String> cbxActividad;
     private javax.swing.JComboBox<String> cbxLocalidad;
     private javax.swing.JComboBox<String> cbxMunicipio;
     private javax.swing.JComboBox<String> cbxTipoVivienda;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tablaViviendas;
     // End of variables declaration//GEN-END:variables

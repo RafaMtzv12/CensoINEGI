@@ -24,6 +24,7 @@ public class DashboardView extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         cargarDatos();
+        cargarDashboard();
     }
     
     public void cargarDatos() {
@@ -45,6 +46,51 @@ public class DashboardView extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
+    
+    public void cargarDashboard() {
+        try {
+            Connection conn = Conexion.getConnection();
+            Statement stmt = conn.createStatement();
+
+            // 🔹 TOTAL HABITANTES
+            ResultSet rs1 = stmt.executeQuery("SELECT COUNT(*) as total FROM habitante");
+            if (rs1.next()) {
+                lblTotalHabitantes.setText(rs1.getInt("total") + "");
+            }
+
+            // 🔹 TOTAL VIVIENDAS
+            ResultSet rs2 = stmt.executeQuery("SELECT COUNT(*) as total FROM vivienda");
+            if (rs2.next()) {
+                lblTotalViviendas.setText(rs2.getInt("total") + "");
+            }
+
+            // 🔹 HABITANTES POR MUNICIPIO
+            ResultSet rs3 = stmt.executeQuery(
+                "SELECT m.nombre, COUNT(h.id) as total " +
+                "FROM habitante h " +
+                "JOIN vivienda v ON h.vivienda_id = v.id " +
+                "JOIN municipio m ON v.municipio_id = m.id " +
+                "GROUP BY m.nombre"
+            );
+
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("Municipio");
+            model.addColumn("Habitantes");
+
+            while (rs3.next()) {
+                model.addRow(new Object[]{
+                    rs3.getString("nombre"),
+                    rs3.getInt("total")
+                });
+            }
+
+            tablaMunicipios.setModel(model);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -57,6 +103,8 @@ public class DashboardView extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         lblTotalHabitantes = new javax.swing.JLabel();
         lblTotalViviendas = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tablaMunicipios = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -69,21 +117,37 @@ public class DashboardView extends javax.swing.JFrame {
         lblTotalViviendas.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lblTotalViviendas.setText("jLabel3");
 
+        tablaMunicipios.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tablaMunicipios);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(18, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(57, 57, 57)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(113, 113, 113)
+                        .addGap(56, 56, 56)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblTotalViviendas)
                             .addComponent(lblTotalHabitantes))))
-                .addContainerGap(74, Short.MAX_VALUE))
+                .addGap(58, 58, 58))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -94,7 +158,9 @@ public class DashboardView extends javax.swing.JFrame {
                 .addComponent(lblTotalHabitantes, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblTotalViviendas, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(157, Short.MAX_VALUE))
+                .addGap(28, 28, 28)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         pack();
@@ -127,7 +193,9 @@ public class DashboardView extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblTotalHabitantes;
     private javax.swing.JLabel lblTotalViviendas;
+    private javax.swing.JTable tablaMunicipios;
     // End of variables declaration//GEN-END:variables
 }

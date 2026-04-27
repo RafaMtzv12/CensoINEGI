@@ -5,11 +5,15 @@ import model.Vivienda;
 
 public class ViviendaDAO {
 
-    public void insertar(Vivienda v) {
+    public int insertar(Vivienda v) {
+        int idGenerado = 0;
+
         try {
             Connection conn = Conexion.getConnection();
+
             PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO vivienda(tipo_id, municipio_id, localidad_id)"
+                "INSERT INTO vivienda(tipo_id, municipio_id, localidad_id) VALUES(?,?,?)",
+                Statement.RETURN_GENERATED_KEYS
             );
 
             ps.setInt(1, v.getTipoId());
@@ -18,9 +22,16 @@ public class ViviendaDAO {
 
             ps.executeUpdate();
 
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                idGenerado = rs.getInt(1);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return idGenerado;
     }
     
     public void listar() {

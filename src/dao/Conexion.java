@@ -83,6 +83,18 @@ public class Conexion {
         + ");";
 
         stmt.execute(sqlHabitante);
+        
+        stmt.execute("CREATE TABLE IF NOT EXISTS actividad ("
+        + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+        + "nombre TEXT)");
+
+        stmt.execute("CREATE TABLE IF NOT EXISTS vivienda_actividad ("
+        + "vivienda_id INTEGER, "
+        + "actividad_id INTEGER)");
+        
+        stmt.executeUpdate("INSERT INTO actividad(nombre) SELECT 'Comercio' WHERE NOT EXISTS (SELECT 1 FROM actividad WHERE nombre='Comercio')");
+        stmt.executeUpdate("INSERT INTO actividad(nombre) SELECT 'Agricultura' WHERE NOT EXISTS (SELECT 1 FROM actividad WHERE nombre='Agricultura')");
+        stmt.executeUpdate("INSERT INTO actividad(nombre) SELECT 'Servicios' WHERE NOT EXISTS (SELECT 1 FROM actividad WHERE nombre='Servicios')");
 
             System.out.println("Tabla vivienda creada o ya existente");
 
